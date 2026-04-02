@@ -36,3 +36,51 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+
+
+.shop__main {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+}
+
+.window__item {
+  display: flex;
+  margin: 0px 0px 20px 0px;
+}
+
+.shop__window {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  margin: 0px 50px 0px 0px;
+  padding: 20px;
+}
+
+
+
+.basket {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+
+.basket__item {
+  display: flex;
+  margin: 0px 0px 10px 0px;
+}
+
+.shop__basket {
+  background-color: white;
+}
+
+
+
+body { 
+  background-color: rgb(234, 240, 250);
+}
