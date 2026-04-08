@@ -42,7 +42,7 @@ function TotalCost({ list }) {
     totalCost += i[1]
   }
 
-  return <h4>Итого: ${totalCost}</h4>
+  return <h4 className="basket__total">Итого: ${totalCost}</h4>
 }
 
 function OnlineShopItem({ item, cost }) {
