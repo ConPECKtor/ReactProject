@@ -12,4 +12,44 @@ code {
     monospace;
 }
 
+body {
+  background-color: rgb(206, 206, 206);
+}
 
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.table__lines {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.table__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+
+}

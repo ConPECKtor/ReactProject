@@ -1,126 +1,155 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import "./App.css";
 
-const shopList = new Map();
 
-shopList.set("Apple MacBook Air", 999);
-shopList.set("Sony PlayStation 5", 499);
-shopList.set("Умная колонка", 99);
+let usersList = [
+{namesurname: 'Алексей Иванов', role: 'admin', stat: true}, 
+{namesurname: 'Мария Смирнова', role: 'user', stat: true},
+{namesurname: 'Иван Петров', role: 'user', stat: false},
+{namesurname: 'Елена Соколова', role: 'admin', stat: false},
+{namesurname: 'Дмитрий Волков', role: 'user', stat: true},
+]
 
-const arrShopList = Array.from(shopList.entries());
 
 function MainText() {
   return (
-    <div>
-      <h1>Мой Магазин</h1>
+    <div className='main__text'>
+    <h1>Панель управления пользователями</h1>
     </div>
   );
 }
 
-function ShopWindowText() {
-  return (
-    <div>
-      <h3>Витрина</h3>
-    </div>
-  );
-}
-
-function BasketText({ list }) {
-  let itemsAmount = list.length;
-
-  return (
-    <div>
-      <h3>Корзина ({itemsAmount})</h3>
-    </div>
-  );
-}
-
-function TotalCost({ list }) {
-  let totalCost = 0
-
-  for (let i of list) {
-    totalCost += i[1]
+function InputThings(
+  {
+    searchInput, setSearchInput,
+    isActive, setIsActive,
+    selectedOption, setSelectedOption
   }
-
-  return <h4 className="basket__total">Итого: ${totalCost}</h4>
-}
-
-function OnlineShopItem({ item, cost }) {
-  return (
-    <p>
-      {item} - {cost}
-    </p>
-  );
-}
-
-function ShopWindow({ list, id, basketList, setBasket }) {
-  let [item, cost] = list[id];
-
-  function addToBasket() {
-    const newBasketList = [...basketList, [item, cost]];
-
-    setBasket(newBasketList);
-    console.log("В корзине сейчас:", newBasketList);
-  }
+) {
 
   return (
-    <div className="window__item">
-      <OnlineShopItem item={item} cost={cost} />
-      <button onClick={addToBasket} className="window__addBtn">В корзину</button>
+    <form className="input">
+      <InputSearch searchInput={searchInput} setSearchInput={setSearchInput} isActive={isActive} setIsActive={setIsActive}/>
+      <InputSort isActive={isActive} setIsActive={setIsActive}
+       selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+    </form>
+  )
+}
+
+function InputSearch({searchInput, setSearchInput}) {
+  
+  return (
+    <input type="text" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className='search'/>
+  )
+}
+
+function InputSort({setIsActive, selectedOption, setSelectedOption}) {
+  
+  return (
+    <div className='sort'>
+      <label className='sort__checkbox'>
+            <input type="checkbox"
+            value={null} 
+            onChange={(e) => setIsActive(e.target.checked)}/>
+            Только активные
+      </label>
+      <select value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}
+          className='sort__list'>
+          <option value="all">Все роли</option>
+          <option value="admin">Админ</option>
+          <option value="user">Пользователь</option>
+      </select>
     </div>
-  );
+  )
 }
 
-function ShopBasket({ list, setBasket }) {
-  function remover(i) {
-    const newList = [...list];
+function TableRow({mass}) {
 
-    newList.splice(i, 1);
+  let fullName = mass.namesurname
+  let role = mass.role
+  let status = mass.stat
 
-    setBasket(newList);
-  }
-
-  return (
-    <ul className="basket">
-      {list.map(([item, cost], i) => (
-        <li key={i} className="basket__item">
-          <OnlineShopItem item={item} cost={cost} />
-          <button onClick={() => remover(i)} className="basket__removeBtn">X</button>
-        </li>
-      ))}
-    </ul>
-  );
+  return(
+    <tr>
+      <td>
+        {fullName}
+      </td>
+      <td>
+        {role == 'user' ? 'Пользователь' : 'Администратор'}
+      </td>
+      <td style={status ? { color: 'green' } : { color: 'red' } }>
+      {status ? 'Активен' : 'Заблокирован'}
+      </td>
+    </tr>
+  )
 }
 
-function OnlineShop({ list }) {
-  const [basket, setBasket] = useState([]);
+
+function UserList({usersList, searchInput, isActive, selectedOption}) {
+
+  let rows = []
+
+  usersList.forEach(element => {
+    if (element.namesurname.toLowerCase().indexOf(searchInput.toLowerCase()) === -1) {
+      return
+    }
+
+    if (!element.stat && isActive) {
+      return
+    }
+
+    if ((selectedOption != 'all') && (element.role != selectedOption)) {
+      return
+    }
+
+
+
+
+    rows.push(<TableRow mass={element}/>)
+  })
 
   return (
+    <div className='table'>
+      <table>
+        <thead>
+          <tr className='table__lines'>
+            <th>Имя</th>
+            <th>Роль</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+
+        <tbody className="table__body">
+          {rows.length > 0 ? rows : 'Пользователи не найдены...'}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function AdminPanel() {
+
+  let [searchInput, setSearchInput] = useState('')  
+  let [isActive, setIsActive] = useState(false)
+  let [selectedOption, setSelectedOption] = useState('all')
+
+  return (
+    <>
     <div className="container">
-      <MainText />
-      <div className="shop__main">
-        <div className="shop__window">
-          <ShopWindowText />
-          {list.map((item, i) => (
-            <ShopWindow
-              list={list}
-              id={i}
-              basketList={basket}
-              setBasket={setBasket}
-            />
-          ))}
-        </div>
-
-        <div className="shop__basket">
-          <BasketText list={basket} />
-          <ShopBasket list={basket} setBasket={setBasket} />
-          <TotalCost list={basket} />
-        </div>
-      </div>
+      <MainText/>
+      <InputThings 
+      searchInput={searchInput}
+      setSearchInput = {setSearchInput}
+      isActive = {isActive}
+      setIsActive = {setIsActive}
+      selectedOption = {selectedOption}
+      setSelectedOption = {setSelectedOption}/>
+      <UserList usersList={usersList} searchInput={searchInput} isActive={isActive} selectedOption={selectedOption}/>
     </div>
+    </>
   );
 }
 
 export default function App() {
-  return <OnlineShop list={arrShopList} />;
+  return <AdminPanel/>;
 }
